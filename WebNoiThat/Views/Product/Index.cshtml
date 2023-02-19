@@ -1,0 +1,74 @@
+﻿@model WebNoiThat.Models.tblsanpham
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+<link rel="stylesheet" type="text/css" href="~/Content/ChiTietSanPham.css">
+<h2 style="text-align:center;margin-bottom:50px">Chi tiết sản phẩm</h2>
+<div class="product-layout">
+    <div class="product-detail-media" style="width:35%;">
+
+        <div class="product-detail-img">
+
+            <img width="100%" src="@Model.DuongDanAnh" alt="">
+
+        </div>
+
+
+    </div>
+    <div class="product-detail-info" style="width:65%;">
+
+        <div class="product-detail-name">
+
+            <h2>@Model.TenSanPham</h2>
+
+        </div>
+        <div class="product-detail-star">
+
+            <i class="fas fa-star" style="color: #eec317;"></i>
+            <i class="fas fa-star" style="color: #eec317;"></i>
+            <i class="fas fa-star" style="color: #eec317;"></i>
+            <i class="fas fa-star" style="color: #eec317;"></i>
+            <i class="fas fa-star" style="color: #eec317;"></i>
+
+        </div>
+        <div class="product-detail-description">
+
+            <span>@Model.MoTaSanPham</span>
+
+        </div>
+        <div class="product-detail-price">
+
+            <h4>Giá sản phẩm</h4>
+            <h5>@String.Format(format, "{0:c0}", @Model.GiaKhuyenMai) @*@Model.GiaKhuyenMai ₫*@</h5>
+
+        </div>
+        <div class="product-detail-controler">
+
+            <div>
+                <button class="btn-them" name="btn-addToCart" onclick="location.href = '@Url.Action("AddToCart","Home", new { ProductName = Model.TenSanPham, price = Model.GiaKhuyenMai, returnUrl = Request.Url.AbsoluteUri })'" @* type="submit"*@ >Thêm vào giỏ hàng</button>
+
+                @*<form action="" method="post" style="width: 70%; ;display:flex; align-items: center;">
+
+                    <input class="form-control" type="number" id="quantity" value="1" name="quantity" min="1" placeholder="Nhập số lượng" style="width:40%">
+                    <button class="btn-them" name="btn-addToCart" type="submit">Thêm vào giỏ hàng</button>
+
+                </form>*@
+
+            </div>
+
+        </div>
+        <div class="social-media" style="margin-top:12px">
+
+            <a class="social-media-link" href=""><i class="fab fa-facebook-f"></i></a>
+            <a class="social-media-link" href=""><i class="fab fa-instagram" style="margin: 0 16px"></i></a>
+            <a class="social-media-link" href=""><i class="fab fa-linkedin-in"></i></a>
+
+
+        </div>
+
+    </div>
+</div>
+

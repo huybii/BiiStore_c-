@@ -1,0 +1,99 @@
+﻿@model List<WebNoiThat.Models.tblsanpham>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/Admin_Layout.cshtml";
+}
+@*@Html.Action("Index", "ProductManager")*@
+
+<div class="QuanLiSP" style="width:100%">
+    <div class="main-header">
+        <h3 style="margin-bottom: 30px;">Quản lí sản phẩm</h3>
+        <div class="main-header-btn">
+            <a class="add-new" href="@Url.Action("CreateProduct","ProductManager")">+ Thêm mới</a>
+            <a class="export-file" onclick="exportTableToExcel('tblData')" href=""><i class="fas fa-file-download"></i></a>
+        </div>
+    </div>
+    <div class="search-btn" style="position: relative;">
+        @using (Html.BeginForm("Index", "ProductManager"))
+        {
+            @Html.AntiForgeryToken()
+            <form method="post">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <input type="text" class="search-input" name="txtSearch" id="inputSearch" placeholder="Nhập từ khóa" value="@ViewBag.keyWord" required>
+                <a style="position: absolute;top:4px;left:180px;" href="@Url.Action("Index","ProductManager")"><i class="fas fa-times"></i></a>
+
+                <button class="btn-search" type="submit" name="btnSearch">
+                    Tìm
+                    <i class="fas fa-search" style="margin-left:4px"></i>
+                </button>
+            </form>
+        }
+    </div>
+
+    <div class="" style="margin-top: 50px;">
+        <table class="table" id="tblData">
+            <thead>
+                <tr>
+                    <th scope="col">STT</th>
+                    <th scope="col" style="text-align: left;">Sản phẩm</th>
+                    <th scope="col">Danh mục</th>
+                    <th scope="col">Giá gốc</th>
+                    <th scope="col">Giá khuyến mãi</th>
+                    <th scope="col">Thao tác</th>
+
+                </tr>
+            </thead>
+            <!-- <tbody> -->
+
+            <tbody id="tBodyMain">
+                @{ int i = 0;}
+                @foreach (var item in ViewBag.Products)
+                {
+                    i++;
+                    <tr>
+                        <td>@i.ToString()</td>
+                        <th scope="row" style="width:320px;text-align: left;">
+                            <a class="cart-product">
+                                <img width="20%" src="@item.DuongDanAnh" style="margin-right: 8px;" alt="">
+                                @item.TenSanPham
+
+                            </a>
+                        </th>
+
+                        <td>
+                            @foreach (var itemCategory in ViewBag.Categorys)
+                            {
+                                if (item.IdDanhMuc == itemCategory.ID)
+                                {
+                                    @itemCategory.TenDanhMuc
+                                }
+                            }
+
+                        </td>
+
+                        <td>@item.GiaGoc</td>
+
+                        <td>@item.GiaKhuyenMai</td>
+
+                        <td>
+                            <a href="@Url.Action("EditProduct","ProductManager",new { id = item.ID, idDanhMuc = item.IdDanhMuc })" style="margin-right: 12px;"><i class="far fa-edit"></i></a>
+                            <a onclick="return confirm('Bạn có muốn xóa không?')" href="@Url.Action("DeleteProduct","ProductManager",new { id = item.ID })"><i class="far fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function confirm_delete() {
+        if (confirm("Bạn có chắc chắn muốn xóa?") === true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+</script>
+

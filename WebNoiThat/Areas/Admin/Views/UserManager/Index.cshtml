@@ -1,0 +1,139 @@
+﻿@model WebNoiThat.Models.tbldangnhap
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/Admin_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/Content/GioHang.css" type="text/css">
+<link rel="stylesheet" href="~/Content/QuanLiSanPham.css" type="text/css">
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#select-all').click(function (event) {  //on click
+            if (this.checked) { // check select status
+                $('.checkbox1').each(function () { //loop through each checkbox
+                    this.checked = true;  //select all checkboxes with class "checkbox1"
+                });
+
+            } else {
+                $('.checkbox1').each(function () { //loop through each checkbox
+                    this.checked = false; //deselect all checkboxes with class "checkbox1"
+                });
+            }
+        });
+
+    });
+</script>
+<div class="main-header">
+    <h3 style="margin-bottom: 30px;">Quản lí người dùng</h3>
+    <div class="main-header-btn">
+        <!-- <button type="submit" form="formDanhMuc" name="btnSave" class="add-new">+ Thêm mới</button> -->
+        <a class="export-file" href=""><i class="fas fa-file-download"></i></a>
+    </div>
+</div>
+
+
+
+<div class="search-btn" style="position: relative;margin-top:30px">
+    @using (Html.BeginForm("Index", "UserManager"))
+    {
+        @Html.AntiForgeryToken()
+        <form method="post">
+            <input type="text" class="search-input" name="txtSearch" id="inputSearch" placeholder="Email/tên hiển thị" value="@ViewBag.KeyWord">
+            <a style="position: absolute;top:4px;left:180px;" href=""><i class="fas fa-times"></i></a>
+
+            <button class="btn-search" type="submit" name="btnSearch">
+                Tìm
+                <i class="fas fa-search" style="margin-left:4px"></i>
+            </button>
+        </form>
+    }
+    </div>
+<!-- <h5 style="color: #75ab38;">Tổng quan hôm nay</h5> -->
+
+<div class="order-layout" style="margin:0;position:relative;margin-top:30px">
+    <table class="table" style="font-size: 14px;">
+        <thead>
+            <tr>
+                @*<th scope="col"><input type="checkbox" class="form-check-input checkbox1" id="select-all"></th>
+               *@ <th scope="col">STT</th>
+                <th scope="col">Email</th>
+                <th scope="col">Mật khẩu</th>
+                <th scope="col">Tên hiển thị</th>
+                <th scope="col">Số điện thoại</th>
+                <th scope="col">Phân quyền</th>
+                <th scope="col">Ngày tạo</th>
+                <th scope="col">Số lần bom</th>
+                <th scope="col">Trạng thái</th>
+                 <th scope="col">Thao tác</th> 
+
+            </tr>
+        </thead>
+        <!-- <tbody> -->
+
+        <tbody id="tBodyMain">
+            @*<form method="post">
+                <button type="submit" onclick="return confirm(\'Xác nhận chặn người dùng?\')" name="btn-Chan" class="add-new" style="position:absolute;top:-60px;right:130px;">Chặn</button>
+                <button type="submit" onclick="return confirm(\'Xác nhận bỏ chặn người dùng?\')" name="btn-BoChan" class="add-new" style="position:absolute;top:-60px;right:-10px;">Bỏ chặn</button>
+*@
+
+                
+                    @{int i = 0;}
+                    @foreach (var item in ViewBag.lstUser)
+                    {
+                        i++;
+                    <tr>
+                    @*<td scope="col"><input type="checkbox" class="form-check-input checkbox1" name="ckb" value=""></td>
+*@
+                    <td>@i.ToString()</td>
+                    <td>@item.Email</td>
+                    <td>@item.MatKhau</td>
+                    <td>@item.TenHienThi</td>
+                    <td>@item.SDT</td>
+                    <td>@item.PhanQuyen</td>
+                    <td>@item.NgayTao</td>
+                    <td>
+                    @foreach(var item1 in ViewBag.SoLanBom)
+                     {
+                            if (item.ID == item1.id)
+                            {
+                                @item1.SoLanBom
+                            }
+                     }
+                    </td>
+                    @*<td>5</td>*@
+                    <td>
+                        
+                        @if(item.TrangThai == "hoạt động"){
+                                <span class="status" style="background-color:#00c292;">@item.TrangThai</span>
+                            }else{
+                                <span class="status" style="background-color:#e46a76;">@item.TrangThai</span>
+
+                            }
+
+                    </td>
+                    <td>
+
+                        @if (item.TrangThai == "hoạt động")
+                        {
+                            <a class="status" onclick="return confirm('Xác nhận chặn người dùng?')" href="@Url.Action("BlockUser","UserManager",new { id = item.ID })" style="background-color:#D2691E;">chặn</a>
+                        }
+                        else
+                        {
+                            <a class="status" onclick="return confirm('Xác nhận bỏ chặn người dùng?')" href="@Url.Action("UnBlockUser","UserManager",new { id = item.ID })" style="background-color:#D2691E;">bỏ chặn</a>
+                        }
+
+                    </td>
+                    </tr>
+                    }
+                
+
+            @*</form>*@
+        </tbody>
+
+
+
+
+    </table>
+</div>
+

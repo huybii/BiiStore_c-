@@ -1,0 +1,40 @@
+﻿@model List<WebNoiThat.Models.tblgiohang>
+@{
+    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+@*<div style="overflow-y: auto;">
+    <div class="cart-sidebar-header">
+        <h3>Chi tiết giỏ hàng</h3>
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    </div>
+    <div>*@
+        @foreach (var item in Model)
+        {
+
+            <div class="cart-sidebar-item">
+
+                <div class="cart-img">
+                    @foreach (var item1 in ViewBag.productInfo)
+                    {
+                        if (item.TenSanPham == item1.TenSanPham)
+                        {
+                            <img width="100%" src="@item1.DuongDanAnh" alt="">
+                        }
+
+                    }
+
+                </div>
+                <div class="cart-item-info">
+                    <div>
+                        <h5 class="cart-item-name">@item.TenSanPham</h5>
+                        <span class="cart-item-price">@String.Format(format, "{0:c0}", @item.DonGia) </span>
+                        <span>x @item.SoLuong  </span>
+                    </div>
+
+                    <a class="cart-delete-item" onclick="return confirm('Bạn có muốn xóa khỏi giỏ hàng không?')" href="@Url.Action("RemoveFromCart","Home",new { id = item.ID, returnUrl = Request.Url.AbsoluteUri })" >x</a>
+
+                </div>
+            </div>
+        }
+    </div>
+@*</div>*@

@@ -1,0 +1,141 @@
+﻿@model List<WebNoiThat.Models.tbldanhmuc>
+@{
+    ViewBag.Title = "Home Page";
+}
+@{ 
+    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+<!-- slider -->
+<div id="carouselExampleControls" class="carousel slide slider-head" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="https://loopinfosol.in/themeforest/ekka-html-v2/ekka-html/assets/images/main-slider-banner/7.jpg" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="https://loopinfosol.in/themeforest/ekka-html-v2/ekka-html/assets/images/main-slider-banner/8.jpg" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="https://loopinfosol.in/themeforest/ekka-html-v2/ekka-html/assets/images/main-slider-banner/9.jpg" class="d-block w-100" alt="...">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true" style="background-color: #142f41;"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true" style="background-color: #142f41;"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+    <div class="slider-info">
+        <h4>Phong cách thời thượng</h4>
+        <h1>Hàng mới về</h1>
+        <p style="max-width: 500px; color: #777; font-size: 18px; margin-top: 24px;">
+            Introducing Apple Watch Series 4. Fundamentally redesigned and re-engineered to help
+            you stay even more active, healthy, and connected.
+        </p>
+        <h3>Còn chần chờ gì nữa!</h3>
+        <a class="btn btn-secondary" href="">Mua sắm ngay</a>
+    </div>
+</div>
+<!-- end slider -->
+<!-- category slider -->
+<div class="category-slider">
+    <div class="category-slider-header">
+        <h2>Danh mục sản phẩm</h2>
+        <p>Dễ dàng lựa chọn theo sở thích của bạn</p>
+    </div>
+    <div class="category-slider-container">
+        @foreach (var item in ViewBag.lstCategory)
+        {
+            <div class="category-slider-item" style="background-image: url('@item.DuongDanAnh');background-position: center; background-repeat: no-repeat; background-size: cover;">
+                <div class="category-slider-btn">
+                    <a href="@Url.Action("Index","Category",new { id = item.ID })" class="category-slider-item-link">@item.TenDanhMuc</a>
+                </div>
+            </div>
+        }
+        
+        
+
+    </div>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="~/Content/slick-1.8.1/slick/slick.min.js"></script>
+    <script type="text/javascript">
+        $('.category-slider-container').slick({
+            infinite: true,
+            slidesToShow: 4,
+            slidesToScroll: 4,
+            dots: true
+        });
+    </script>
+
+
+</div>
+<!-- end category slider -->
+
+<div class="main">
+    <div class="main-heading">
+        <h2>Lựa chọn hàng đầu</h2>
+        <p>Định hình phong cách của bạn</p>
+    </div>
+    <div class="category">
+        <ul class="category-list">
+            @foreach (var item in ViewBag.lstCategory )
+            {
+            <li class="category-item">
+                <a class="category-item-link" href="@Url.Action("Index","Category",new { id = item.ID })">@item.TenDanhMuc</a>
+                <a class="category-item-viewAll" href="@Url.Action("Index","Category",new { id = item.ID })">Xem tất cả >></a>
+                <div class="row products-row">
+                    @foreach (var itemProduct in ViewBag.lstProduct)
+                    {
+
+                        if (item.ID == itemProduct.IdDanhMuc)
+                        {
+                            <div class="col products-col">
+                                <div class="product-view">
+                                    <div class="product-img">
+                                        <a href="" class="product-link">
+                                            <img class="main-img" width="100%" src="@itemProduct.DuongDanAnh" alt="">
+
+                                        </a>
+                                    </div>
+                                    <div class="product-btn">
+                                        @if (Session["account"] != null)
+                                        {
+                                            @*onclick="AddCart(@itemProduct.ID)"*@
+                                            <a href="@Url.Action("AddToCart", "Home", new { ProductName = itemProduct.TenSanPham, price = itemProduct.GiaKhuyenMai, returnUrl = Request.Url.AbsoluteUri })" class="product-btn-link product-btn-cart"><i class="fas fa-shopping-cart"></i></a>
+                                        }
+                                        else
+                                        {
+                                            <a onclick="alert('Vui lòng đăng nhập để mua sắm')" class="product-btn-link product-btn-cart"><i class="fas fa-shopping-cart"></i></a>
+                                        }
+                                        <a href="@Url.Action("Index","Product",new { id = itemProduct.ID })" class="product-btn-link product-btn-view"><i class="far fa-eye"></i></a>
+                                    </div>
+                                    <div class="product-info">
+                                        <h5 class="product-name">
+                                            <a href="" class="product-link">@itemProduct.TenSanPham</a>
+                                        </h5>
+
+                                        <span class="price-main">@String.Format(format, "{0:c0}", @itemProduct.GiaGoc) @*@itemProduct.GiaGoc*@</span>
+                                        <span class="price-sale">@String.Format(format, "{0:c0}", @itemProduct.GiaKhuyenMai) @*@itemProduct.GiaKhuyenMai*@</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    }
+                </div>
+                </li>
+            }
+            @*<li class="category-item">
+            <a class="category-item-link" href="">Giường ngủ</a>
+        </li>
+        <li class="category-item">
+            <a class="category-item-link" href="">Đèn thiết kế</a>
+        </li>
+        <li class="category-item">
+            <a class="category-item-link" href="">Bàn</a>
+        </li>*@
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+﻿@model WebNoiThat.Models.tbldanhmuc
+
+@{
+    ViewBag.Title = "EditCategory";
+    Layout = "~/Areas/Admin/Views/Shared/Admin_Layout.cshtml";
+}
+
+<div class="product-layout-left" style="width:30%;height:500px; margin-top:40px;">
+    @using (Html.BeginForm("EditCategory", "Category", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @*<div style="display: flex;justify-content:space-between;align-items:center;">
+                <h5>Thông tin</h5>
+                <button type="submit" form="formDanhMuc" name="btnSave" class="add-new">Lưu dữ liệu</button>
+            </div>*@
+        <form method="post" id="formDanhMuc" style="height: 100%;">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div style="display: flex;justify-content:space-between;align-items:center;">
+                <h5>Thông tin</h5>
+                <button type="submit" name="btnSave" class="add-new">Lưu dữ liệu</button>
+            </div>
+            <div class="row" style="margin-bottom:16px;">
+                <span class="col form-input">
+                    <label for="">Tên danh mục *</label>
+                    <input class="form-control" type="text" value="@Model.TenDanhMuc" name="txtTenDanhMuc" placeholder="Nhập tên sản phẩm" required>
+                </span>
+            </div>
+
+            <div class="row" style="margin-bottom:16px;">
+                <span class="col form-input">
+                    <label for="">Hình ảnh *</label>
+                    <input type="file" class="form-control-file" name="file" id="">
+                    <img src="@Model.DuongDanAnh" alt="" width="100%">
+                </span>
+
+            </div>
+        </form>
+    }
+</div>
+

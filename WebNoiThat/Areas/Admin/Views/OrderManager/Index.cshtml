@@ -1,0 +1,273 @@
+﻿@model List<WebNoiThat.Models.tbldonhang>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/Admin_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/Content/GioHang.css" type="text/css">
+<link rel="stylesheet" href="~/Content/QuanLiSanPham.css" type="text/css">
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#select-all').click(function (event) {  //on click
+            if (this.checked) { // check select status
+                $('.checkbox1').each(function () { //loop through each checkbox
+                    this.checked = true;  //select all checkboxes with class "checkbox1"
+                });
+
+            } else {
+                $('.checkbox1').each(function () { //loop through each checkbox
+                    this.checked = false; //deselect all checkboxes with class "checkbox1"
+                });
+            }
+        });
+
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $('#btnDaGiao').click(function () {
+            document.getElementById('txtAction').value = "đã giao"
+        })
+    });
+
+    $(function () {
+        $('#btnGiaoThatBai').click(function () {
+            document.getElementById('txtAction').value = "giao thất bại"
+        })
+    });
+</script>
+
+<div class="QuanLiDonHang">
+    <h5 style="color: #75ab38;">Quản lí đơn hàng</h5>
+    <div class="today-status">
+        <a href="@Url.Action("Index","OrderManager", new { OrderStatus = "tất cả" })" class="today-status-item" style="width: 19.5%;">
+            <div class="today-status-item-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="today-status-item-info">
+                <h5 style="color: #7c7c7c;font-size: 14px;">Tất cả</h5>
+
+                <span style="color: #75ab38; font-weight: 500;font-size: 20px;"><?php echo $_tatca ?></span>
+            </div>
+        </a>
+        <a href="@Url.Action("Index","OrderManager", new { OrderStatus = "chờ xác nhận" })" class="today-status-item" style="width: 19.5%;">
+            <div class="today-status-item-icon">
+                <i class="fas fa-hourglass-half"></i>
+            </div>
+            <div class="today-status-item-info">
+                <h5 style="color: #7c7c7c;font-size: 14px;">Chờ xác nhận</h5>
+
+                <span style="color: #75ab38; font-weight: 500;font-size: 20px;"><?php echo $_choxacnhan ?></span>
+            </div>
+        </a>
+        <a href="@Url.Action("Index","OrderManager", new { OrderStatus = "đang giao" })" class="today-status-item" style="width: 19.5%;">
+            <div class="today-status-item-icon">
+                <i class="fas fa-truck"></i>
+            </div>
+            <div class="today-status-item-info">
+                <h5 style="color: #7c7c7c;font-size: 14px;">Đang giao</h5>
+                <span style="color: #75ab38; font-weight: 500;font-size: 20px;"><?php echo $_danggiao ?></span>
+            </div>
+        </a>
+        <a href="@Url.Action("Index","OrderManager", new { OrderStatus = "đã giao" })" class="today-status-item" style="width: 19.5%;">
+            <div class="today-status-item-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="today-status-item-info">
+                <h5 style="color: #7c7c7c;font-size: 14px;">Đã giao</h5>
+                <span style="color: #75ab38; font-weight: 500;font-size: 20px;"><?php echo $_dagiao ?></span>
+            </div>
+        </a>
+        <a href="@Url.Action("Index","OrderManager", new { OrderStatus = "thất bại" })" class="today-status-item" style="width: 19.5%;">
+            <div class="today-status-item-icon">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="today-status-item-info">
+                <h5 style="color: #7c7c7c;font-size: 14px;">Thất bại</h5>
+                <span style="color: #75ab38; font-weight: 500;font-size: 20px;"><?php echo $_hoanhang ?></span>
+            </div>
+        </a>
+    </div>
+
+
+    <!-- btn tìm kiếm-->
+    <div class="main-header" style="margin: 30px 0;">
+        <div class="search-btn" style="position: relative;">
+            @using (Html.BeginForm("Index", "OrderManager"))
+            {
+                @Html.AntiForgeryToken()
+                <form method="post">
+                    <input type="text" class="search-input" name="txtSearch" id="inputSearch" placeholder="Tìm theo ID, tên, SĐT" value="@ViewBag.keyword">
+                    <a style="position: absolute;top:4px;left:180px;" href="@Url.Action("Index","OrderManager",new { OrderStatus= "tất cả" })"><i class="fas fa-times"></i></a>
+
+                    <button class="btn-search" type="submit" name="btnSearch">
+                        Tìm
+                        <i class="fas fa-search" style="margin-left:4px"></i>
+                    </button>
+                </form>
+            }
+        </div>
+        
+    </div>
+
+
+    <div class="order-layout" style="margin:0; font-size:13px;">
+        @using (Html.BeginForm("ChuyenSanSangGiao", "OrderManager",new { returnUrl = Request.Url.AbsoluteUri }))
+        {
+            @Html.AntiForgeryToken()
+            <form method="post" style="position: relative;">
+                @if (ViewBag.OrderBtn == "ChuyenDangGiao")
+                {
+                <div style="position:absolute;right:48px;top:212px;">
+                    @*<input type="text" id="txt1" name="txt1" value=""/>*@
+                    <input type="text" style="visibility:hidden;" name="txtAction" value="đang giao" />
+                    <button id="btnCheck" type="submit" onclick="return confirm('Xác nhận sẵn sàng giao?')" name="btn-ChuyenSanSangGiao" class="btn-search">Chuyển sẵn sàng giao</button>
+                </div>
+                }
+                else if (ViewBag.OrderBtn == "ChuyenDaGiao")
+                {
+                    <div style="position:absolute;right:48px;top:212px;">
+                        <input id="txtAction" type="text" style="visibility:hidden;" name="txtAction" value=""/>
+                        @*<input type="text" style="visibility:hidden;" name="txtAction" value="ChuyenGiaoThatBai"/>*@
+                        <button id="btnDaGiao" type="submit" onclick="return confirm('Xác nhận đã giao?')" name="btn-ChuyenDaGiao" class="btn-search">Chuyển đã giao</button>
+                        <button id="btnGiaoThatBai" type="submit" onclick="return confirm('Xác nhận giao thất bại?')" name="btn-ChuyenGiaoThatBai" class="btn-search">Chuyển giao thất bại</button>
+
+                    </div>
+
+                }
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col"><input type="checkbox" class="form-check-input checkbox1" id="select-all"></th>
+                            <th scope="col">STT</th>
+                            <th scope="col">Sản phẩm</th>
+                            <th scope="col">Tên người nhận</th>
+                            <th scope="col">Số điện thoại</th>
+                            <th scope="col">Địa chỉ nhận hàng</th>
+                            <th scope="col">Tổng thanh toán</th>
+                            <th scope="col">Ngày đặt</th>
+                            <th scope="col">Trạng thái</th>
+                            <th scope="col">Thao tác</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{int i = 0;}
+                        @foreach (var item in Model)
+                        {
+                            i++;
+                            <tr>
+                                <td scope="col"><input type="checkbox" class="form-check-input checkbox1" name="ckb" value="@item.ID"></td>
+                                <td>@i.ToString()</td>
+
+                                <td style="position: relative;">
+
+                                    <a href="" class="order-item">sản phẩm</a>
+                                    <div class="order-item-detail">
+                                        <table class="table" style="width:100%">
+                                            <thead class="thead-dark">
+                                                <tr>
+                                                    <th scope="col">Sản phẩm</th>
+
+                                                    <th scope="col">đơn giá</th>
+
+                                                    <th scope="col" style="min-width:100px">số lượng</th>
+
+                                                </tr>
+
+                                            </thead>
+
+                                            <tbody>
+                                                @foreach (var item1 in ViewBag.lstOrderItem)
+                                                {
+                                                    if (item.ID == item1.IdDonHang)
+                                                    {
+                                                        <tr>
+                                                            <th scope="row" style="max-width:280px;text-align: left;">
+
+                                                                <a class="cart-product" style="width:280px;">
+                                                                    @foreach (var item2 in ViewBag.lstProduct)
+                                                                    {
+                                                                        if (item1.TenSanPham == item2.TenSanPham)
+                                                                        {
+                                                                            <img width="20%" src="@item2.DuongDanAnh" alt="">
+                                                                        }
+                                                                    }
+                                                                    @item1.TenSanPham
+
+                                                                </a>
+
+                                                            </th>
+
+                                                            <td>@item1.DonGia</td>
+
+                                                            <td>@item1.SoLuong</td>
+
+                                                        </tr>
+                                                    }
+                                                }
+
+                                            </tbody>
+
+                                        </table>
+
+                                    </div>
+
+
+                                </td>
+
+                                <td>@item.TenNguoiNhan</td>
+
+                                <td>@item.SDT</td>
+
+                                <td>@item.DiaChiChiTiet @item.Xa @item.Huyen @item.ThanhPho</td>
+
+                                <td>@item.TongTien</td>
+
+                                <td>@item.NgayDat</td>
+
+                                <td>
+                                    @*<span class="status" style="background-color:#03a9f3;">@item.TrangThai</span>*@
+                                    @if (item.TrangThai == "chờ xác nhận")
+                                    {
+                                        <span class="status">@item.TrangThai</span>
+                                    }
+                                    else if (item.TrangThai == "đang giao")
+                                    {
+                                        <span class="status" style="background-color:#03a9f3;">@item.TrangThai</span>
+                                    }
+                                    else if (item.TrangThai == "đã hủy" || item.TrangThai == "giao thất bại")
+                                    {
+                                        <span class="status" style="background-color:#e46a76;">@item.TrangThai</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status" style="background-color:#00c292;">@item.TrangThai</span>
+                                    }
+                                </td>
+                                <td style="padding-top: 16px !important;">
+                                    @if (item.TrangThai == "chờ xác nhận")
+                                    {
+                                        <a class="btn-cancel-order" name="btn-huy" onclick="return confirm('Bạn có muốn hủy không?')" href="@Url.Action("CancelOrder","OrderManager", new { id = item.ID , returnUrl = Request.Url.AbsoluteUri })">hủy</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn-cancel-order" name="btn-huy" disabled title="đơn đang giao/đã giao không thể hủy!" style="cursor: not-allowed;">hủy</a>
+
+                                    }
+
+                                </td>
+
+
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </form>
+        }
+    </div>
+</div>
+

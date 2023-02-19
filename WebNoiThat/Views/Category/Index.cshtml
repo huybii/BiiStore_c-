@@ -1,0 +1,109 @@
+﻿@model List<WebNoiThat.Models.tbldanhmuc>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+<link rel="stylesheet" type="text/css" href="~/Content/ChiTietDanhMuc.css">
+<div class="category-layout">
+    <div class="filter-product">
+        <div class="filter-header">
+            <h4 style="margin-top:32px">Lọc sản phẩm</h4>
+        </div>
+        @using (Html.BeginForm("FilterProduct", "Category"))
+        {
+            @Html.AntiForgeryToken()
+            <div class="filter-controler">
+
+                <form action="" method="post" style="width:100%">
+                    <div class="rdo-category">
+                        <h5>Danh mục sản phẩm</h5>
+                        @foreach (var item in ViewBag.lstCategory)
+                        {
+                            <div class="rdo-row">
+                                @if (item.ID == ViewBag.id)
+                                {
+                                    <input class="form-check-input rdo" type="radio" value="@item.ID" name="rdoDanhMuc" checked>
+                                }
+                                else
+                                {
+                                    <input class="form-check-input rdo" type="radio" value="@item.ID" name="rdoDanhMuc">
+                                }
+
+
+                                <span style="margin: 8px 0 0 12px;">@item.TenDanhMuc</span>
+
+                            </div>
+                        }
+                        </div>
+                        @*<h5 style="margin: 12px ;">Giá</h5>
+                        <div class="filter-price">
+
+                            <div class=" from-price">
+                                <span>Từ</span>
+                                <input name="txtGiaTu" class="form-control from-price-input" type="text">
+                                <span style="position: absolute;top: 31px;right: 24px;">VND</span>
+                            </div>
+                            <div class="to-price">
+                                <span>Đến</span>
+                                <input name="txtGiaDen" class="form-control to-price-input" type="text">
+                                <span style="position: absolute;top: 31px;right: 24px;">VND</span>
+                            </div>
+
+                        </div>*@
+                        <button name="btnLoc" type="submit" class="btn-filter">Lọc</button>
+
+                    </form>
+
+                    </div>
+                        }
+                </div>
+    
+    <div class="category-products">
+        <div class="category-products-header">
+            
+            <h4 style="margin-top:32px">Danh mục: @ViewBag.Category</h4>
+           
+        </div>
+        <div class="products-on-category">
+            <div class="row products-row">
+                @foreach (var item in ViewBag.lstProduct)
+                {
+                <div class="col products-col" style="min-width:22%; max-width: 22%;">
+
+                    <div class="product-view" style="width:100%">
+
+                        <div class="product-img">
+                            <a href="" class="product-link">
+                                <img class="main-img" width="100%" src="@item.DuongDanAnh" alt="">
+                            </a>
+                        </div>
+                        <div class="product-btn">
+
+                            <a href="@Url.Action("AddToCart", "Home", new { ProductName = item.TenSanPham, price = item.GiaKhuyenMai })" class="product-btn-link product-btn-cart"><i class="fas fa-shopping-cart"></i></a>
+                            <a href="@Url.Action("Index","Product",new { id = item.ID })" class="product-btn-link product-btn-view"><i class="far fa-eye"></i></a>
+
+                        </div>
+                        <div class="product-info">
+
+                            <h5 class="product-name">
+
+                                <a href="" class="product-link">@item.TenSanPham</a>
+
+                            </h5>
+
+                            <span class="price-main">@String.Format(format, "{0:c0}", @item.GiaGoc) @*@item.GiaGoc*@</span>
+                            <span class="price-sale">@String.Format(format, "{0:c0}", @item.GiaKhuyenMai) @*@item.GiaKhuyenMai ₫*@</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

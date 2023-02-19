@@ -1,0 +1,171 @@
+﻿@model List<WebNoiThat.Models.tbldonhang>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Sản phẩm</th>
+            <th scope="col">Tên người nhận</th>
+            <th scope="col">Số điện thoại</th>
+            <th scope="col">Địa chỉ nhận hàng</th>
+            <th scope="col">Tổng thanh toán</th>
+            <th scope="col">Ngày đặt</th>
+            <th scope="col">Trạng thái</th>
+            <th scope="col">Thao tác</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        
+            @{int i = 0;}
+            @foreach (var item in Model)
+            {
+                i++;
+                <tr>
+                    <td>@i.ToString()</td>
+
+                    <td style="position: relative;">
+
+                        <a href="" class="order-item">sản phẩm</a>
+                        <div class="order-item-detail">
+                            <table class="table" style="width:100%">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col">Sản phẩm</th>
+
+                                        <th scope="col">đơn giá</th>
+
+                                        <th scope="col" style="min-width:100px">số lượng</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var item1 in ViewBag.lstOrderItem)
+                                    {
+                                        if (item.ID == item1.IdDonHang)
+                                        {
+                                        <tr>
+                                            <th scope="row" style="max-width:280px;text-align: left;">
+
+                                                <a class="cart-product" style="width:280px;">
+                                                    @foreach (var item2 in ViewBag.lstProduct)
+                                                    {
+                                                        if (item1.TenSanPham == item2.TenSanPham)
+                                                        {
+                                                        <img width="20%" src="@item2.DuongDanAnh" alt="">
+                                                        }
+                                                    }
+                                                    @item1.TenSanPham
+
+                                                </a>
+
+                                            </th>
+
+                                            <td>@item1.DonGia</td>
+
+                                            <td>@item1.SoLuong</td>
+
+                                        </tr>
+                                        }
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                    </td>
+
+                    <td>@item.TenNguoiNhan</td>
+
+                    <td>@item.SDT</td>
+
+                    <td>@item.DiaChiChiTiet @item.Xa @item.Huyen @item.ThanhPho</td>
+
+                    <td>@item.TongTien</td>
+
+                    <td>@item.NgayDat</td>
+
+                    <td>
+                        @*<span class="status" style="background-color:#03a9f3;">@item.TrangThai</span>*@
+                        @if (item.TrangThai == "chờ xác nhận")
+                        {
+                            <span class="status">@item.TrangThai</span>
+                        }else if (item.TrangThai == "đang giao") { 
+                            <span class="status" style="background-color:#03a9f3;">@item.TrangThai</span>
+                        }else if (item.TrangThai == "đã hủy" || item.TrangThai == "giao thất bại") { 
+                            <span class="status" style="background-color:#e46a76;">@item.TrangThai</span>
+                        }else{
+                            <span class="status" style="background-color:#00c292;">@item.TrangThai</span>
+                        }
+
+                        @*if($row["TrangThai"] == 'chờ xác nhận'){
+                        <span class="status">'.$row["TrangThai"].'</span>
+                        }else if($row["TrangThai"] == 'đang giao'){
+                        <span class="status" style="background-color:#03a9f3;">'.$row["TrangThai"].'</span>
+                        }elseif($row["TrangThai"] == 'đã hủy' || $row["TrangThai"] == 'giao thất bại'){
+                        <span class="status" style="background-color:#e46a76;">'.$row["TrangThai"].'</span>
+                        }
+                        else{
+                        <span class="status" style="background-color:#00c292;">'.$row["TrangThai"].'</span>
+                        }*@
+
+
+                    </td>
+                    <td style="padding-top: 16px !important;">
+                        @if (item.TrangThai == "chờ xác nhận")
+                        {
+                            <a class="btn-cancel-order" name="btn-huy" onclick="return confirm('Bạn có muốn hủy không?')" href="@Url.Action("CancelOrder","Cart", new { id = item.ID , returnUrl = Request.Url.AbsoluteUri })">hủy</a>
+                        }
+                        else
+                        {
+                            <a class="btn-cancel-order" name="btn-huy" disabled title="đơn đang giao/đã giao không thể hủy!" style="cursor: not-allowed;">hủy</a>
+
+                        }
+
+                    </td>
+                    <!--<td style="padding-top: 16px !important;">
+
+                    // <form action="GioHang.php" method="post">
+
+                        if($row["TrangThai"] == 'chờ xác nhận'){
+                        <a class="btn-cancel-order" name="btn-huy" onclick="return confirm(\'Bạn có muốn hủy không?\')" href="GioHangControler.php?IdDonHang='.$row[" ID"].'">hủy</a>
+                        }else{
+                        <a class="btn-cancel-order" name="btn-huy" disabled title="đơn đang giao/đã giao không thể hủy!">hủy</a>
+                        }
+
+                        //
+                    </form>
+                    //-->
+                    <!-- hủy đơn hàng -->
+                    <!--if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['btn-huy'])){
+
+                                $query_huy = "update tblDonHang set TrangThai = 'đã hủy' where EmailUser ='" . $_SESSION['userName'] . "' and ID = '".$row["ID"]."'";
+                                $result_huy = mysqli_query($conn, $query_huy);
+                                if($result_huy == true){
+                                // <meta http-equiv="refresh" content="0">
+
+                                echo "
+                                <script type='text/javascript'>
+                ";
+                                    echo "alert('Hủy đơn thành công!');";
+                                    echo "</script>";
+                                }
+                                else{
+                                echo "data empty";
+                                }
+                                }
+
+                                //-->
+                    <!-- hủy đơn hàng -->
+                    <!--</td>-->
+
+                </tr>
+            }
+        
+    </tbody>
+</table>

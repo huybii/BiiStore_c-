@@ -1,0 +1,317 @@
+﻿@model List<WebNoiThat.Models.tblgiohang>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var format = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+<link rel="stylesheet" href="~/Content/GioHang.css" type="text/css">
+<script type="text/javascript">
+    $(document).ready(function () {
+        var SoLuong = document.getElementById("quantity");
+        @*const btns = document.getElementsByClassName("sub-btn");
+        if (SoLuong.value == 1) {
+            for (const btn in btns) {
+                btn.href = "";
+            }
+            //document.getElementsByName("btn-sub1").href = ""; 
+        }*@
+        var btns = document.querySelectorAll('.sub-btn');
+        if (SoLuong.value == 1) {
+            btns.forEach(function (btn) {
+                btn.href = "";
+            });
+        }
+        
+    });
+</script>
+<div class="main-control">
+    @using (Html.BeginForm("Order", "Cart"))
+     {
+         @Html.AntiForgeryToken()
+        <form class="form-control" method="post" action="" style="width:100%">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="cart-controler">
+            <div class="cart-table">
+                @*<form class="form-control" action="" style="width:100%">*@
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Sản phẩm</th>
+                            <th scope="col">Giá</th>
+                            <th scope="col">Số lượng</th>
+                            <th scope="col">Tổng tiền</th>
+                            <th scope="col">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Count > 0)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <th scope="row" style="width:320px;text-align: left;">
+
+                                        <a class="cart-product">
+                                            @foreach (var item1 in ViewBag.productInfo)
+                                            {
+                                                if (item.TenSanPham == item1.TenSanPham)
+                                                {
+                                                    <img width="20%" src="@item1.DuongDanAnh" style="margin-right: 8px;" alt="">
+                                                }
+
+                                            }
+                                            @item.TenSanPham
+
+                                        </a>
+                                    </th>
+
+                                    <td>@String.Format(format, "{0:c0}", @item.DonGia)</td>
+
+                                    <td>
+                                        <div class="quantity">
+
+                                            <a href="@Url.Action("subQuantity", "Cart", new { productName = item.TenSanPham })" name="btn-add" id="btn-sub" class="quantity-btn sub-btn">-</a>
+                                            <input id="quantity" class="quantity-input" value="@item.SoLuong" type="number" min="1">
+                                            <a href="@Url.Action("plusQuantity", "Cart", new { productName = item.TenSanPham })" name="btn-add" id="btn-plus" class="quantity-btn">+</a>
+
+                                        </div>
+                                    </td>
+                                    @{
+                                        int TongTien = Convert.ToInt32(item.SoLuong) * Convert.ToInt32(item.DonGia);
+                                    }
+                                    <td> <span name="txtTongTien"> @String.Format(format, "{0:c0}", @TongTien) </span></td>
+
+                                    <td><a onclick="return confirm('Xác nhận xóa sản phẩm khỏi giỏ hàng?')" href="@Url.Action("RemoveFromCart","Home",new { id = item.ID, returnUrl = Request.Url.AbsoluteUri })"><i class="far fa-trash-alt"></i></a> </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>Giỏ hàng trống</tr>
+                        }
+                    </tbody>
+                </table>
+                <!-- thành tiền -->
+                <div class="cart-btn">
+                    <a href="@Url.Action("Index","Home")">Quay lại mua sắm</a>
+
+                    <div style="position:relative">
+
+                        Tổng thành tiền:
+                        @{ 
+                            string totalBillString = ViewBag.TotalBill;
+                            int totalBill;
+                            Int32.TryParse(totalBillString, out totalBill);
+                            @*int totalBill = Convert.ToInt32(ViewBag.TotalBill);*@
+                         }
+                        <span id="totalBill" class="price-sale">@String.Format(format, "{0:c0}", totalBill) </span>
+                        <input style="position:absolute;left:0;visibility: hidden;" type="number" name="txtTongBill" value="@totalBill" />
+                    </div>
+
+
+                </div>
+                @*</form>*@
+
+
+            </div>
+            <div class="payment">
+                @*<form method="post" class="form-control">*@
+                <h4>Thanh toán</h4>
+                <div class="shiping">
+                    <h5>Thông tin nhận hàng</h5>
+                    <div class="row form-shiping-row">
+                        <span class="col form-input">
+                            <label for="">Họ và tên người nhận *</label>
+                            <input class="form-control" type="text" name="txtHoTen" placeholder="Nhập họ và tên" required>
+                        </span>
+
+                    </div>
+                    <div class="row form-shiping-row">
+                        <span class="col form-input">
+                            <label for="">Thành phố / Tỉnh *</label>
+                            <input class="form-control" type="text" name="txtThanhPho" placeholder="Nhập thành phố / tỉnh" required>
+                        </span>
+
+                    </div>
+                    <div class="row form-shiping-row">
+                        <span class="col form-input">
+                            <label for="">Quận / Huyện *</label>
+                            <input class="form-control" type="text" name="txtHuyen" placeholder="Nhập quận / huyện" required>
+                        </span>
+
+                    </div>
+                    <div class="row form-shiping-row">
+                        <span class="col form-input">
+                            <label for="">Phường / Xã *</label>
+                            <input class="form-control" type="text" name="txtXa" placeholder="Nhập phường / xã" required>
+                        </span>
+
+                    </div>
+                    <div class="row form-shiping-row">
+                        <span class="col form-input">
+                            <label for="">Địa chỉ chi tiết *</label>
+                            <input class="form-control" type="text" name="txtDiaChiChiTiet" placeholder="Nhập địa chỉ chi tiết" required>
+                        </span>
+
+                    </div>
+                    <div class="row form-shiping-row">
+                        <span class="col form-input">
+                            <label for="">Số điện thoại nhận hàng *</label>
+                            <input class="form-control" type="text" name="txtSDT" placeholder="Nhập số điện thoại" required>
+                        </span>
+
+                    </div>
+                    <!-- <div class="total-price">
+                    <button class="btn-buy" type="">Mua hàng</button>
+                </div> -->
+                    <button class="btn-buy" name="btn-buy" type="submit" onclick='return confirm("Bạn có muốn đặt hàng không?")'>Mua hàng</button>
+                </div>
+                @*</form>*@
+            </div>
+
+        </div>
+    </form>
+        }
+    </div>
+
+
+<!-- đơn hàng -->
+<div class="order-layout">
+    @{ Html.RenderAction("OrderLayout", "Cart"); }
+    <!--<table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Sản phẩm</th>
+                <th scope="col">Tên người nhận</th>
+                <th scope="col">Số điện thoại</th>
+                <th scope="col">Địa chỉ nhận hàng</th>
+                <th scope="col">Tổng thanh toán</th>
+                <th scope="col">Ngày đặt</th>
+                <th scope="col">Trạng thái</th>
+                <th scope="col">Thao tác</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+
+                <td style="position: relative;">
+
+                    <a href="" class="order-item">sản phẩm</a>
+                    <div class="order-item-detail">
+                        <table class="table" style="width:100%">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Sản phẩm</th>
+
+                                    <th scope="col">đơn giá</th>
+
+                                    <th scope="col" style="min-width:100px">số lượng</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <th scope="row" style="max-width:280px;text-align: left;">
+
+                                        <a class="cart-product" style="width:280px;">
+
+                                            <img width="20%" src="" alt="">
+                                            tên sp
+
+                                        </a>
+
+                                    </th>
+
+                                    <td>1 củ</td>
+
+                                    <td>32</td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                </td>
+
+                <td>huy</td>
+
+                <td>45646456</td>
+
+                <td>hn</td>
+
+                <td>1 củ</td>
+
+                <td>22/02</td>
+
+                <td>
+                    <span class="status" style="background-color:#03a9f3;">ngon ô</span>-->
+    @*if($row["TrangThai"] == 'chờ xác nhận'){
+        <span class="status">'.$row["TrangThai"].'</span>
+        }else if($row["TrangThai"] == 'đang giao'){
+        <span class="status" style="background-color:#03a9f3;">'.$row["TrangThai"].'</span>
+        }elseif($row["TrangThai"] == 'đã hủy' || $row["TrangThai"] == 'giao thất bại'){
+        <span class="status" style="background-color:#e46a76;">'.$row["TrangThai"].'</span>
+        }
+        else{
+        <span class="status" style="background-color:#00c292;">'.$row["TrangThai"].'</span>
+        }*@
+
+
+    <!--</td>
+    <td style="padding-top: 16px !important;">
+        <a class="btn-cancel-order" name="btn-huy" onclick="return confirm('Bạn có muốn hủy không?')" href="">hủy</a>
+
+    </td>-->
+    <!--<td style="padding-top: 16px !important;">
+
+        // <form action="GioHang.php" method="post">
+
+            if($row["TrangThai"] == 'chờ xác nhận'){
+            <a class="btn-cancel-order" name="btn-huy" onclick="return confirm(\'Bạn có muốn hủy không?\')" href="GioHangControler.php?IdDonHang='.$row[" ID"].'">hủy</a>
+            }else{
+            <a class="btn-cancel-order" name="btn-huy" disabled title="đơn đang giao/đã giao không thể hủy!">hủy</a>
+            }
+
+            //
+        </form>
+        //-->
+    <!-- hủy đơn hàng -->
+    <!--if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['btn-huy'])){
+
+                    $query_huy = "update tblDonHang set TrangThai = 'đã hủy' where EmailUser ='" . $_SESSION['userName'] . "' and ID = '".$row["ID"]."'";
+                    $result_huy = mysqli_query($conn, $query_huy);
+                    if($result_huy == true){
+                    // <meta http-equiv="refresh" content="0">
+
+                    echo "
+                    <script type='text/javascript'>
+    ";
+                        echo "alert('Hủy đơn thành công!');";
+                        echo "</script>";
+                    }
+                    else{
+                    echo "data empty";
+                    }
+                    }
+
+                    //-->
+    <!-- hủy đơn hàng -->
+    <!--</td>-->
+    <!--</tr>
+
+        </tbody>
+    </table>-->
+</div>
+<!-- đơn hàng -->
